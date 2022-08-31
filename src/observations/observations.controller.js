@@ -41,6 +41,26 @@ function hasSkyCondition(req, res, next){
         message: `sky_condition must be one of: ${validSkyConditions}`})
 }
 
+function hasAirTemperature(req, res, next){
+    const airTemperature = Number(req.body.data.air_temperature);
+    if(airTemperature){
+        return next();
+    }
+    next({status:400, 
+    message:`air temperature must be between -50C(-60F) and 107C(224F)`})
+}
+
+function hasAirTemperatureUnit(req, res, next){
+    const airTemperatureUnit = req.body.data.air_temperature_unit;
+    console.log("hasAirTempUnit::: ", airTemperatureUnit)
+    console.log(['F','C'].includes(airTemperatureUnit));
+    if(['F','C'].includes(airTemperatureUnit)){
+        return next();
+    }
+    next({status:400, 
+    message:`air temperature Unit must be either 'F' for Fahrenheit or 'C' for Celcius`})
+}
+
 async function create(req, res){
     // const newObservation = req.body.data;
     // const now = new Date().toISOString();
@@ -66,6 +86,8 @@ module.exports = {
             hasLatitude,
             hasLongitude,
             hasSkyCondition,
+            hasAirTemperature,
+            hasAirTemperatureUnit,
             asyncErrorBoundary(create)],
     list: asyncErrorBoundary(list), 
 };
